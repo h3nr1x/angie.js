@@ -1,0 +1,145 @@
+<html>
+    <head>
+        <script src="angie.js" type="text/javascript"></script>     
+    </head>
+    
+    <body>
+        <canvas id="cetrys" style="border:none" width="1" height="1"></canvas>
+        <script type="text/javascript">
+         if (!Date.now) {
+             Date.now = function now() {
+                 return new Date().getTime();
+             };
+         }        
+
+         var Cetrys = function() {
+             var i;
+             
+             this.pieces = this.buildPieces();
+             this.pieceColors = [ '#f00', '#0f0', '#00f' ];
+             this.gameOver = false;
+
+             this.canvas = document.getElementById("cetrys");
+             if (!this.canvas) {
+                 return;
+             }
+
+             this.w = 400;
+             this.h = 600;
+             this.rows = 30;
+             this.rowSize = Math.floor(h / 30)  
+             this.cols = Math.floor(h / rowSize);
+
+             canvas.width = w;
+             canvas.height = h;
+
+             this.fps = 30;
+             this.secondsPerFrame = Math.floor(1.0 / fps);
+
+             this.ctx = canvas.getContext("2d");
+
+             this.requestAnimationFrame = 
+                 requestAnimationFrame ||
+                 webkitRequestAnimationFrame ||
+                 mozRequestAnimationFrame ||
+                 msRequestAnimationFrame ||
+                 oRequestAnimationFrame;
+
+             if (!requestAnimationFrame) {
+                 this.requestAnimationFrame = function(callback, param) {
+                     callback(param);
+                     setTimeout(this.requestAnimationFrame, mpf);
+                 }
+             }
+             
+             this.board = new Array(rows);
+             for (i = 0; i < rows; i++) {
+                 board[i] = new Array(cols);
+             }
+
+             this.currentPiece = this.nextPiece();
+             this.currentPieceRow;
+             this.currentPieceCol;
+         }
+
+         Cetrys.prototype = {
+             constructor: Cetrys,
+
+             nextPiece: function() { 
+                 
+             },
+
+             drawPiece: function(piece) {
+             },  
+
+             buildPieces: function() { 
+                 var square = [ '11\n11' ];
+                 var s1 = [ '1\n11\n01', '011\n11' ];
+                 var s2 = [ '01\n11\n1', '110\n011' ];
+                 var I = [ '1\n1\n1\n1', '1111'];
+                 var l1 = [ '1\n1\n11', '001\111', '11\n01\n01', '111\n100' ];
+                 var l2 = [ '01\n01\n11', '111\001', '11\n1\n1', '100\n111' ];
+                 var t = [ '010\n111', '01\n11\n01', '111\n010', '1\n11\n1' ];             
+                 return [ square, s1, s2, I, l1, l2, t ];
+             },
+
+             drawBoard: function() {
+                 var i, j;
+                 var backgroundColor = '#000';
+                 this.ctx.fillStyle = backgroundColor;
+                 this.ctx.fillRect(0, 0, this.w, this.h);
+             },
+
+             updateLogic: function() {
+             },
+
+             run: function() {
+                 var updateDt = 0;
+                 var drawDt = 0;
+                 var lastFrameTime = Date.now();
+                 var frame = function() {
+                     var now = Date.now(); 
+                     var dt = Math.min(1, (now - lastFrameTime) / 1000);
+                     
+                     drawDt += dt;
+                     if (drawDt < this.secondsPerFrame) { 
+                         this.draw();
+                     }
+                     
+                     this.requestAnimationFrame(frame, this.canvas);                 
+                 }
+                 frame();
+             },
+
+             gameLoop: function() {
+                 this.drawBoard();
+                 this.updateLogic();
+             }
+         }
+          
+         var Test = function() { 
+             this.x = 5;
+             this.y = 2;
+             this.z = 7;
+             var invocations = 0;
+             this.testFun = function() { 
+                 if ((invocations % 2) == 0) { 
+                    this.testFun();
+                 } else {
+                    console.log(this.x, invocations++);
+                 }
+             }
+          }
+
+          Test.prototype = { 
+              constructor: Test,
+              testX: function() { 
+                  this.testFun();
+              }
+          };
+          // var t = new Test();
+          // t.testX();
+          // var game = new Cetrys();
+        </script>
+    </body>
+</html>
