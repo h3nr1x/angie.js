@@ -255,8 +255,46 @@ angie.math.vec3.prototype = {
         this.z = z;
     }, 
     
-    add: function(v) { 
-        this.
+    add: function(v) {
+        if (v.x) {  
+            this.x += v.x;
+            this.y += v.y;
+            this.z += v.z;
+        } else {
+            this.x += v;
+            this.y += v;
+            this.z += v;
+        }
+        return this;
     },
+
+    addv: function(v) {
+        this.x += v.x;
+        this.y += v.y;
+        this.z += v.z;
+        return this;
+    },    
+    
+    adds: function(s) {
+        this.x += s;
+        this.y += s;
+        this.z += s;
+        return this;
+    },       
+    
+    mul: function(s) {
+        this.x *= s;
+        this.y *= s;
+        this.z *= s;
+        return this;
+    },
+    
+    dot: function(v) {
+        return this.x * v.x + this.y * v.y + this.z * v.z;    
+    },
+    
+    cross: function(v) {
+        
+    }
 };
 
