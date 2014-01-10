@@ -254,6 +254,30 @@ angie.math.vec3.prototype = {
         this.y = y;
         this.z = z;
     }, 
+
+    /**
+     * Sets the x component for this vector, the value of the specified parameter
+     * @param {number} x - The new value for this vector x coordinate
+     */    
+    setX: function(x) {
+        this.x = x;  
+    },
+
+    /**
+     * Sets the y component for this vector, the value of the specified parameter
+     * @param {number} y - The new value for this vector y coordinate
+     */
+    setY: function(y) {
+        this.y = y;  
+    },
+    
+    /**
+     * Sets the z component for this vector, the value of the specified parameter
+     * @param {number} z - The new value for this vector z coordinate
+     */
+    setZ: function(z) {
+        this.z = z;  
+    },    
     
     add: function(v) {
         if (v.x) {  
