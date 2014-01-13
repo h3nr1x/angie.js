@@ -99,6 +99,22 @@ angie.math.vec3 = function(x, y, z) {
     this.z = z || (y ? 0.0 : this.x);
 };
 
+angie.math.vec3.max = function(v, w) {
+    return new angie.math.vec3(v.x < w.x ? v.x : w.x, v.y < w.y ? v.y : w.y, v.z < w.z ? v.z : w.z);
+}
+
+angie.math.vec3.min = function(v, w) {
+    return new angie.math.vec3(v.x > w.x ? v.x : w.x, v.y > w.y ? v.y : w.y, v.z > w.z ? v.z : w.z);
+}
+
+angie.math.vec3.lerp = function(v0, v1, t) {
+    return new angie.math.vec3((v1.x - v0.x) * t + v0.x, (v1.y - v0.y) * t + v0.y, (v1.z - v0.z) * t + v0.z);
+}
+
+angie.math.vec3.norm = function(v) {
+    return v.clone().normalize();
+}
+
 angie.math.vec3.prototype = { 
     // Constructor
     constructor: angie.math.vec3,
@@ -121,6 +137,13 @@ angie.math.vec3.prototype = {
     
     clone: function() { 
         return new angie.math.vec3(this.x, this.y, this.z);
+    },
+
+    copy: function(v) {
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
+        return this;
     },
 
     // Utility operations
@@ -299,17 +322,91 @@ angie.math.vec3.prototype = {
         return this;
     },    
     
-    adds: function(s) {
-        this.x += s;
-        this.y += s;
-        this.z += s;
+    adds: function(scalar) {
+        this.x += scalar;
+        this.y += scalar;
+        this.z += scalar;
         return this;
-    },       
+    },
     
-    mul: function(s) {
-        this.x *= s;
-        this.y *= s;
-        this.z *= s;
+    sub: function(v) {
+        if (v.x) {
+            this.x -= v.x;
+            this.y -= v.y;
+            this.z -= v.z;
+        } else {
+            this.x -= v;
+            this.y -= v;
+            this.z -= v;
+        }
+        return this;
+    },
+    
+    subs: function(scalar) {
+        this.x -= scalar;
+        this.y -= scalar;
+        this.z -= scalar;
+        return this;
+    },
+
+    subv: function(v) {
+        this.x -= v.x;
+        this.y -= v.y;
+        this.z -= v.z;
+        return this;
+    },
+    
+    mul: function(v) {
+        if (v.x) {
+            this.x *= v.x;
+            this.y *= v.y;
+            this.z *= v.z;
+        } else {
+            this.x *= v;
+            this.y *= v;
+            this.z *= v;
+        }
+        return this;
+    },
+    
+    muls: function(scalar) {
+        this.x *= scalar;
+        this.y *= scalar;
+        this.z *= scalar;
+        return this;
+    },
+
+    mulv: function(v) {
+        this.x *= v.x;
+        this.y *= v.y;
+        this.z *= v.z;
+        return this;
+    },
+    
+    div: function(v) {
+        if (v.x) {
+            this.x /= v.x;
+            this.y /= v.y;
+            this.z /= v.z;
+        } else {
+            this.x /= v;
+            this.y /= v;
+            this.z /= v;            
+        }
+        return this;
+    },
+    
+    divs: function(scalar) {
+        this.x /= scalar;
+        this.y /= scalar;
+        this.z /= scalar;
+        return this;
+    },
+    
+    divv: function(v) {
+        this.x /= v.x;
+        this.y /= v.y;
+        this.z /= v.z;
         return this;
     },
     
@@ -318,7 +415,124 @@ angie.math.vec3.prototype = {
     },
     
     cross: function(v) {
+        var x = this.x;
+        var y = this.y;
+        var z = this.z;
+        return new angie.math.vec3(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x);
+    },
+    
+    neg: function() {
+        this.x *= -1.0;
+        this.y *= -1.0;
+        this.z *= -1.0;
+        return this;
+    },
+    
+    negate: function() {
+        return this.neg();
+    },
+
+    length2: function() {
+        var x = this.x;
+        var y = this.y;
+        var z = this.z;
+        return x * x + y * y + z * z;
+    },
+
+    lengthSqr: function() {
+        return this.length2();
+    },
+    
+    setLength: function(l) {
+        this.normalize();
+        this.x *= l;
+        this.y *= l;
+        this.z *= l;        
+    },
+    
+    length: function() {
+        var x = this.x;
+        var y = this.y;
+        var z = this.z;
+        return Math.sqrt(x * x + y * y + z * z);
+    },
+
+    distance: function(v) {
+        var dx = v.x - this.x;
+        var dy = v.y - this.y;
+        var dz = v.z - this.z;
+        return Math.sqrt(dx * dx + dy * dy + dz * dz);
+    },
+
+    distance2: function(v) {
+        var dx = v.x - this.x;
+        var dy = v.y - this.y;
+        var dz = v.z - this.z;
+        return dx * dx + dy * dy + dz * dz;
+    },
+    
+    distanceSqr: function(v) {
+        return this.distance2(v);
+    },
+    
+    manhattanDist: function(v) {
+        return Math.abs(v.x - this.x) + Math.abs(v.y - this.y) * Math.abs(v.z - this.z);
+    },
+    
+    clamp: function(min, max) {
+        var x = this.x
+        var y = this.y;
+        var z = this.z;
+        if (x < min) {
+            this.x = min;
+        } else if (x > max) {
+            this.x = max;
+        }
         
-    }
+        if (y < min) {
+            this.y = min;
+        } else if (y > max) {
+            this.y = max;
+        }
+        
+        if (z < min) {
+            this.z = min;
+        } else if (z > max) {
+            this.z = max;
+        }
+        return this;        
+    },
+    
+    angle: function(v) {
+        var v0 = this.clone().normalize();
+        var v1 = v.clone().normalize();
+        return Math.acos(v0.dot(v1));
+    },
+
+    projection: function() {
+        
+    },
+    
+    isNormalized: function() {
+        var x = this.x;
+        var y = this.y;
+        var z = this.z;
+        var l = Math.sqrt(x * x + y * y + z * z);
+        return Math.abs(1.0 - l) < 0.000000001;
+    },
+    
+    normalize: function() {
+        var x = this.x;
+        var y = this.y;
+        var z = this.z;
+        var l = Math.sqrt(x * x + y * y + z * z);
+        
+        if (l !== 0.0) {
+            this.x = x / l;
+            this.y = y / l;
+            this.z = z / l;
+        }
+        return this;
+    },
 };
 
