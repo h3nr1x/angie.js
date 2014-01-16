@@ -66,6 +66,12 @@ angie.console = (function() {
  */
 $namespace('angie.math');
 
+/**
+ * Takes an array and returns a {@link angie.math.vec3}
+ * @param {number[]} - An array with at least 3 numbers
+ * @param {number} [offset=0] - An offset from the init of the array from which the elements are readed
+ * @returns An {@link angie.math.vec3} created from the array elements
+ */ 
 angie.math.arrayToVec3 = function(array, offset) {
     var index = offset || 0;
     return new angie.math.vec3(array[index + 0], this.y = array[index + 1], this.z = array[index + 2]);
@@ -99,18 +105,58 @@ angie.math.vec3 = function(x, y, z) {
     this.z = z || (y ? 0.0 : this.x);
 };
 
+/**
+ * Returns a new vec3 which components are the max values of the two vec3 arguments
+ * Example: 
+ * <pre>
+ *    v = (2, 3, -5)
+ *    w = (-1, 3, 20)
+ *    max(v, w) = (2, 3, 20)
+ * </pre>
+ * @param {angie.math.vec3} - a vec3 
+ * @param {angie.math.vec3} - another vec3
+ * @returns A new {@link angie.math.vec3} with the max values from the parameters
+ */
 angie.math.vec3.max = function(v, w) {
     return new angie.math.vec3(v.x < w.x ? v.x : w.x, v.y < w.y ? v.y : w.y, v.z < w.z ? v.z : w.z);
 }
 
+/**
+ * Returns a new vec3 which components are the min values of the two vec3 arguments
+ * Example: 
+ * <pre>
+ *    v = (2, 3, -5)
+ *    w = (-1, 3, 20)
+ *    max(v, w) = (-1, 3, -5)
+ * </pre>
+ * @param {angie.math.vec3} - a vec3 
+ * @param {angie.math.vec3} - another vec3
+ * @returns A new {@link angie.math.vec3} with the min values from the parameters
+ */
 angie.math.vec3.min = function(v, w) {
     return new angie.math.vec3(v.x > w.x ? v.x : w.x, v.y > w.y ? v.y : w.y, v.z > w.z ? v.z : w.z);
 }
 
+/**
+ * Does a {@link http://en.wikipedia.org/wiki/Linear_interpolation|linear interpolation}
+ * between the two passed vectors and a t parameter. It returns:
+ * <pre>
+ *   (v1 - v0) * t + v0
+ * </pre>
+ * @param {angie.math.vec3} - This parameter represents the v0 vector of the above formula
+ * @param {angie.math.vec3} - This parameter represents the v0 vector of the above formula
+ * @param {number} - represents the t parameter of the above formula, its usually in the range [0, 1]
+ * @returns A new {@link angie.math.vec3} resulting of the linear interpolation applied to the parameters 
+ */ 
 angie.math.vec3.lerp = function(v0, v1, t) {
     return new angie.math.vec3((v1.x - v0.x) * t + v0.x, (v1.y - v0.y) * t + v0.y, (v1.z - v0.z) * t + v0.z);
 }
 
+/**
+ * Returns a new {@link angie.math.vec3} that represents the normalized version of the parameter
+ * @param {angie.math.vec3} - The vector to normalize
+ * @returns {angie.math.vec3} - A new {@link angie.math.vec3} that represents the normalized version of the parameter
+ */
 angie.math.vec3.norm = function(v) {
     return v.clone().normalize();
 }
@@ -135,10 +181,21 @@ angie.math.vec3.prototype = {
         return "[" + this.x + ", " + this.y + ", " + this.z + "]";
     },
     
+    /**
+     * Clones the current {@link angie.math.vec3}
+     * 
+     * @returns {angie.math.vec3} - A new {@link angie.math.vec3} with a copy of this vec3
+     */
     clone: function() { 
         return new angie.math.vec3(this.x, this.y, this.z);
     },
 
+    /**
+     * Copy the values from the parameter to this {angie.math.vec3}
+     *
+     * @param {angie.math.vec3} - A {@link angie.math.vec3} with the values to copy from
+     * @returns {angie.math.vec3} - The current {angie.math.vec3} after the modification
+     */ 
     copy: function(v) {
         this.x = v.x;
         this.y = v.y;
@@ -302,6 +359,13 @@ angie.math.vec3.prototype = {
         this.z = z;  
     },    
     
+    /**
+     * Calculates the sum of the current {@link angie.math.vec3} and a passed parameter (scalar or another {@link angie.math.vec3})
+     * @param {number|angie.math.vec3} - The value to add
+     * @returns {angie.math.vec3} - The current {@link angie.math.vec3} after the applied sum
+     * @see {@link angie.math.vec3#addv}
+     * @see {@link angie.math.vec3#adds}
+     */ 
     add: function(v) {
         if (v.x) {  
             this.x += v.x;
@@ -315,6 +379,16 @@ angie.math.vec3.prototype = {
         return this;
     },
 
+    /**
+     * Calculates the sum of the current {@link angie.math.vec3} and another {@link angie.math.vec3}.
+     * This version of the 'add' operation should perform faster than {@link angie.math.vec3#add} due to
+     * the lack of type checking 
+     * 
+     * @param {angie.math.vec3} - The value to add
+     * @returns {angie.math.vec3} - The current {@link angie.math.vec3} after the applied sum
+     * @see {@link angie.math.vec3#add}
+     * @see {@link angie.math.vec3#adds}
+     */ 
     addv: function(v) {
         this.x += v.x;
         this.y += v.y;
@@ -432,6 +506,13 @@ angie.math.vec3.prototype = {
         return this.neg();
     },
 
+    /**
+     * Calculates the squared length of the current {@link angie.math.vec3}:
+     * <pre>
+     *   x * x + y * y + z * z 
+     * </pre>
+     * @returns {number} - That represents the squared length of this {@link angie.math.vec3}
+     */  
     length2: function() {
         var x = this.x;
         var y = this.y;
@@ -475,6 +556,15 @@ angie.math.vec3.prototype = {
         return this.distance2(v);
     },
     
+    /**
+     * Calculates the {@link http://en.wiktionary.org/wiki/Manhattan_distance|Manhattan Distance} of this {@link angie.math.vec3} to
+     * another {@link angie.math.vec3} 
+     * <pre>
+     *    | v.x - u.x | + | v.y - u.y | + | v.z - u.z |
+     * </pre>
+     * @param {angie.math.vec3} - The vector to measure the distance from
+     * @returns {number} - Representing the Manhanttan Distance of the current vector
+     */
     manhattanDist: function(v) {
         return Math.abs(v.x - this.x) + Math.abs(v.y - this.y) * Math.abs(v.z - this.z);
     },
@@ -503,16 +593,49 @@ angie.math.vec3.prototype = {
         return this;        
     },
     
+    /**
+     * Calculates the angle between the current {@link angie.math.vec3} an another {@link angie.math.vec3}.
+     * For that it uses the following relation:
+     * <pre>
+     *                    u . v
+     *    cos(alpha) = -----------
+     *                 ||u|| ||v||
+     * </pre>
+     * Neither this {@link angie.math.vec3} nor the parameter are modified during the operation. Both elements are
+     * cloned prior to their normalization an angle calculation.
+     * 
+     * @param {angie.math.vec3} - The vector that forms the angle with this {@link angie.math.vec3}
+     * @returns 
+     */ 
     angle: function(v) {
         var v0 = this.clone().normalize();
         var v1 = v.clone().normalize();
         return Math.acos(v0.dot(v1));
     },
-
-    projection: function() {
-        
-    },
     
+    /**
+     * Calculates the projection of another vector passed as parameter
+     * upon the current {@link angie.math.vec3}.
+     * <pre>
+     *                                   /        \
+     *                                  |    v    |     u.v
+     *   proj<sub>u</sub><sup>v</sup> = |  -----  | . -------
+     *                                  | || v || |   || u ||
+     *                                   \       /
+     * </pre>
+     * Where v is the parameter and u is this (the current {@link angie.math.vec3}).<br>
+     * Neither this {@link angie.math.vec3} nor the parameter are modified during the operation. Both elements are
+     * cloned prior to the calculation.
+     * 
+     * @param {angie.math.vec3} - The v vector, the vector that is being projected upon this vector
+     * @return {angie.math.vec3} - Representing the projection of the v vector upon this vector
+     */
+    project: function(v) {
+        var vp = v.clone().normalize();
+        var u_dot_v = this.dot(v) / this.length();
+        return vp.muls(u_dot_v);
+    },
+
     isNormalized: function() {
         var x = this.x;
         var y = this.y;
@@ -535,4 +658,3 @@ angie.math.vec3.prototype = {
         return this;
     },
 };
-
